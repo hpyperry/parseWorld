@@ -1,4 +1,4 @@
-# parseWorld
+# copyWorld
 
 macOS first-version clipboard history app.
 
@@ -57,4 +57,4 @@ Run the app:
 ./scripts/run_app.sh
 ```
 
-The built app bundle is created at `.build/app/parseWorld.app`.
+The built app bundle is created at `.build/app/copyWorld.app`.

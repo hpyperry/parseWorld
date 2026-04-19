@@ -31,7 +31,7 @@ final class FakePasteboard: ClipboardPasteboard {
 
 @MainActor
 func makeStore() -> ClipboardHistoryStore {
-    let suiteName = "parseWorld.tests.\(UUID().uuidString)"
+    let suiteName = "copyWorld.tests.\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: suiteName)!
     defaults.removePersistentDomain(forName: suiteName)
     return ClipboardHistoryStore(maximumItems: 30, userDefaults: defaults)

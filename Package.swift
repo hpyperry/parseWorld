@@ -4,17 +4,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "parseWorld",
+    name: "copyWorld",
     platforms: [
         .macOS(.v14)
     ],
     targets: [
         .executableTarget(
-            name: "parseWorld"
+            name: "copyWorld"
         ),
         .testTarget(
-            name: "parseWorldTests",
-            dependencies: ["parseWorld"]
+            name: "copyWorldTests",
+            dependencies: ["copyWorld"]
         ),
     ]
 )
