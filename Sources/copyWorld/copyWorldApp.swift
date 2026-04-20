@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 @main
-struct copyWorldApp: App {
+struct CopyWorldApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     init() {

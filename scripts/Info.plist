@@ -5,15 +5,19 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleDisplayName</key>
-    <string>copyWorld</string>
+    <string>CopyWorld</string>
     <key>CFBundleExecutable</key>
     <string>copyWorld</string>
     <key>CFBundleIdentifier</key>
     <string>com.copyworld.clipboard</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon.icns</string>
+    <key>CFBundleIconName</key>
+    <string>AppIcon</string>
     <key>CFBundleName</key>
-    <string>copyWorld</string>
+    <string>CopyWorld</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

@@ -20,4 +20,8 @@ swiftc \
 
 cp "$ROOT_DIR/scripts/Info.plist" "$APP_DIR/Contents/Info.plist"
 
+if [[ -f "$ROOT_DIR/scripts/AppIcon.icns" ]]; then
+  cp "$ROOT_DIR/scripts/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
+fi
+
 echo "Built app bundle at: $APP_DIR"
