@@ -31,7 +31,7 @@ Ship a local-only menu bar clipboard tool for macOS that behaves like a lightwei
 2. Add clipboard polling through `NSPasteboard`.
 3. Persist clipboard history with `UserDefaults`.
 4. Build history browsing, search, copy-back, delete, and clear actions.
-5. Add local build/run scripts so the app can be launched without extra project setup.
+5. Keep a standard Xcode app project for normal development and retain local scripts as a fallback path.
 
 ## Tech Stack
 
@@ -39,11 +39,31 @@ Ship a local-only menu bar clipboard tool for macOS that behaves like a lightwei
 - `SwiftUI`
 - `AppKit`
 - `UserDefaults`
-- `swiftc` build script for local development
+- `Xcode` macOS app target
+- `Swift Package Manager` for package metadata and tests
+- `swiftc` fallback scripts for local bundle staging
 
 ## Local Run
 
-This machine currently has Swift command line tools but not a complete Xcode app toolchain. Because of that, the project uses direct `swiftc` scripts for now.
+The repository now includes a standard macOS app project at [copyWorld.xcodeproj](copyWorld/copyWorld.xcodeproj).
+
+Preferred development flow:
+
+```bash
+open copyWorld.xcodeproj
+```
+
+In Xcode, select the `copyWorld` scheme and use `Run` or `Product > Build`.
+
+You can also build from the command line once Xcode first-launch setup is complete:
+
+```bash
+xcodebuild -project copyWorld.xcodeproj -scheme copyWorld -configuration Debug build
+```
+
+## Fallback Scripts
+
+If you want to keep using the script-based bundle build during local debugging, the original scripts are still available.
 
 Build the app:
 
