@@ -10,6 +10,7 @@ struct MenuBarView: View {
     @State private var selectedItemID: ClipboardItem.ID?
     @State private var isPreviewPresented = false
     @State private var listIdentity = UUID()
+    @State private var copiedItemID: ClipboardItem.ID?
 
     private var filteredItems: [ClipboardItem] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -79,14 +80,25 @@ struct MenuBarView: View {
                         ClipboardRow(
                             item: item,
                             isSelected: selectedItem?.id == item.id,
+                            isCopied: copiedItemID == item.id,
                             onSelect: {
                                 selectedItemID = item.id
                                 isPreviewPresented = true
                             },
                             onCopy: {
+                                NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
                                 monitor.copy(item)
+                                copiedItemID = item.id
+                                Task { @MainActor in
+                                    try? await Task.sleep(for: .seconds(1.5))
+                                    if copiedItemID == item.id {
+                                        copiedItemID = nil
+                                    }
+                                }
                             },
                             onDelete: {
+                                NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
+
                                 let visibleItemsBeforeDelete = filteredItems
                                 let deletedIndex = visibleItemsBeforeDelete.firstIndex { $0.id == item.id }
                                 let wasPreviewPresented = isPreviewPresented
@@ -106,7 +118,6 @@ struct MenuBarView: View {
                                 }
 
                                 if wasPreviewPresented {
-                                    // If full preview is open, jump to the previous row.
                                     if let deletedIndex {
                                         let targetIndex = max(0, deletedIndex - 1)
                                         selectedItemID = remainingItems[targetIndex].id
@@ -114,7 +125,6 @@ struct MenuBarView: View {
                                         selectedItemID = remainingItems.first?.id
                                     }
                                 } else {
-                                    // If full preview is closed, keep selection stable around current position.
                                     if let deletedIndex {
                                         let targetIndex = min(deletedIndex, remainingItems.count - 1)
                                         selectedItemID = remainingItems[targetIndex].id
@@ -208,6 +218,7 @@ struct MenuBarView: View {
 private struct ClipboardRow: View {
     let item: ClipboardItem
     let isSelected: Bool
+    let isCopied: Bool
     let onSelect: () -> Void
     let onCopy: () -> Void
     let onDelete: () -> Void
@@ -234,13 +245,22 @@ private struct ClipboardRow: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
 
             HStack {
-                Button("Copy", action: onCopy)
-                    .buttonStyle(.borderedProminent)
+                Button(action: onCopy) {
+                    if isCopied {
+                        Label("Copied", systemImage: "checkmark")
+                    } else {
+                        Label("Copy", systemImage: "doc.on.doc")
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(isCopied ? .green : .accentColor)
+                .disabled(isCopied)
 
                 Button("Delete", role: .destructive, action: onDelete)
                     .buttonStyle(.borderedProminent)
                     .tint(.red)
             }
+            .animation(.smooth(duration: 0.2), value: isCopied)
         }
         .padding(.vertical, 4)
     }
