@@ -122,6 +122,10 @@ struct ClipboardItem: Codable, Identifiable, Equatable {
         }
     }
 
+    static func == (lhs: ClipboardItem, rhs: ClipboardItem) -> Bool {
+        lhs.id == rhs.id
+    }
+
     static func imageTitle(from image: NSImage, format: String) -> String {
         let size = image.size
         let w = Int(size.width)
