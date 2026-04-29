@@ -68,7 +68,7 @@ struct ClipboardItem: Codable, Identifiable, Equatable {
             self.thumbnail = Self.generateThumbnail(from: img)
             self.text = Self.imageTitle(from: img, format: format)
         } else {
-            self.text = "(Image)"
+            self.text = String(localized: "(Image)")
         }
     }
 
@@ -78,7 +78,7 @@ struct ClipboardItem: Codable, Identifiable, Equatable {
         switch type {
         case .text, .rtf:
             let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !trimmed.isEmpty else { return "(Empty Text)" }
+            guard !trimmed.isEmpty else { return String(localized: "(Empty Text)") }
             if trimmed.count > Self.titleCharacterLimit {
                 let prefixLength = max(Self.titleCharacterLimit - 1, 0)
                 return String(trimmed.prefix(prefixLength)) + "\u{2026}"
@@ -131,6 +131,7 @@ struct ClipboardItem: Codable, Identifiable, Equatable {
         let w = Int(size.width)
         let h = Int(size.height)
         let fmt = format.uppercased()
-        return "(Image \u{2014} \(fmt), \(w)\u{00d7}\(h))"
+        let template = String(localized: "(Image \u{2014} %@, %lld\u{00d7}%lld)")
+        return String(format: template, fmt, w, h)
     }
 }

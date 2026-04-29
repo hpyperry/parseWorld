@@ -81,7 +81,7 @@ struct ClipboardItemTests {
         let corrupt = Data([0xFF, 0xFE, 0x00, 0x01])
         let item = ClipboardItem(imageData: corrupt, format: "png")
         #expect(item.type == .image)
-        #expect(item.title == "(Image)")
+        #expect(item.title == String(localized: "(Image)"))
         #expect(item.image == nil)
     }
 
@@ -96,7 +96,7 @@ struct ClipboardItemTests {
 
     @Test func title_emptyText() {
         let item = ClipboardItem(text: "   ")
-        #expect(item.title == "(Empty Text)")
+        #expect(item.title == String(localized: "(Empty Text)"))
     }
 
     // MARK: - Subtitle

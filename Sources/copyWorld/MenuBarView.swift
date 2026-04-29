@@ -46,7 +46,9 @@ struct MenuBarView: View {
                 Spacer()
 
                 Menu {
-                    Button(launchAtLoginManager.isEnabled ? "Disable Launch at Login" : "Enable Launch at Login") {
+                    Button(launchAtLoginManager.isEnabled
+                        ? String(localized: "Disable Launch at Login")
+                        : String(localized: "Enable Launch at Login")) {
                         launchAtLoginManager.setEnabled(!launchAtLoginManager.isEnabled)
                     }
 
@@ -232,7 +234,7 @@ private struct ClipboardRow: View {
     let onDelete: () -> Void
 
     private var copyLabel: String {
-        item.type == .image ? "Copy Image" : "Copy"
+        item.type == .image ? String(localized: "Copy Image") : String(localized: "Copy")
     }
 
     var body: some View {
@@ -501,7 +503,7 @@ private struct RTFPreviewTextView: NSViewRepresentable {
         let attributed = NSAttributedString(
             rtf: rtfData,
             documentAttributes: nil
-        ) ?? NSAttributedString(string: "(Unable to render RTF)")
+        ) ?? NSAttributedString(string: String(localized: "(Unable to render RTF)"))
 
         textView.textStorage?.setAttributedString(attributed)
         context.coordinator.lastRenderedData = rtfData
@@ -523,7 +525,7 @@ private struct RTFPreviewTextView: NSViewRepresentable {
         let attributed = NSAttributedString(
             rtf: rtfData,
             documentAttributes: nil
-        ) ?? NSAttributedString(string: "(Unable to render RTF)")
+        ) ?? NSAttributedString(string: String(localized: "(Unable to render RTF)"))
 
         textView.textStorage?.setAttributedString(attributed)
         context.coordinator.lastRenderedData = rtfData

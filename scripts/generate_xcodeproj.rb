@@ -33,13 +33,15 @@ end
 
 assets_ref = resources_group.new_file(File.join(ROOT, "copyWorld/Resources/Assets.xcassets"))
 app_target.resources_build_phase.add_file_reference(assets_ref)
+strings_ref = resources_group.new_file(File.join(ROOT, "copyWorld/Resources/Localizable.xcstrings"))
+app_target.resources_build_phase.add_file_reference(strings_ref)
 resources_group.new_file(File.join(ROOT, "copyWorld/Resources/Info.plist"))
 
 app_target.build_configurations.each do |config|
   config.build_settings["INFOPLIST_FILE"] = "copyWorld/Resources/Info.plist"
   config.build_settings["PRODUCT_BUNDLE_IDENTIFIER"] = "com.copyworld.clipboard"
   config.build_settings["CURRENT_PROJECT_VERSION"] = "1"
-  config.build_settings["MARKETING_VERSION"] = "0.1.0"
+  config.build_settings["MARKETING_VERSION"] = "0.0.3"
   config.build_settings["ASSETCATALOG_COMPILER_APPICON_NAME"] = "AppIcon"
   config.build_settings["SWIFT_VERSION"] = "5.0"
   config.build_settings["MACOSX_DEPLOYMENT_TARGET"] = "14.0"

@@ -31,16 +31,16 @@ final class LaunchAtLoginManager: ObservableObject {
             statusMessage = nil
         case .requiresApproval:
             isEnabled = false
-            statusMessage = "Launch at login needs approval in System Settings > General > Login Items."
+            statusMessage = String(localized: "Launch at login needs approval in System Settings > General > Login Items.")
         case .notFound:
             isEnabled = false
-            statusMessage = "Launch at login is unavailable in the current app bundle."
+            statusMessage = String(localized: "Launch at login is unavailable in the current app bundle.")
         case .notRegistered:
             isEnabled = false
             statusMessage = nil
         @unknown default:
             isEnabled = false
-            statusMessage = "Launch at login status is unavailable."
+            statusMessage = String(localized: "Launch at login status is unavailable.")
         }
     }
 }

@@ -38,7 +38,7 @@ final class StatusBarController: NSObject {
 
     private func configureStatusButton() {
         guard let button = statusItem.button else { return }
-        button.image = NSImage(systemSymbolName: "clipboard", accessibilityDescription: "copyWorld")
+        button.image = NSImage(systemSymbolName: "clipboard", accessibilityDescription: String(localized: "copyWorld"))
         button.imagePosition = .imageOnly
         button.target = self
         button.action = #selector(handleStatusItemClick(_:))
@@ -47,7 +47,7 @@ final class StatusBarController: NSObject {
 
     private func configureContextMenu() {
         let quitItem = NSMenuItem(
-            title: "Quit",
+            title: String(localized: "Quit"),
             action: #selector(quitApp),
             keyEquivalent: "q"
         )
