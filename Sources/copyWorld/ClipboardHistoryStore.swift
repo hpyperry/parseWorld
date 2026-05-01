@@ -1,8 +1,13 @@
 import Foundation
+import Observation
+import OSLog
+
+private let logger = Logger(subsystem: "com.copyworld.clipboard", category: "history-store")
 
 @MainActor
-final class ClipboardHistoryStore: ObservableObject {
-    @Published private(set) var items: [ClipboardItem] = []
+@Observable
+final class ClipboardHistoryStore {
+    private(set) var items: [ClipboardItem] = []
 
     private let storage: ClipboardStorage
     private let maximumItems: Int
@@ -25,12 +30,20 @@ final class ClipboardHistoryStore: ObservableObject {
 
     func remove(itemID: UUID) {
         items.removeAll { $0.id == itemID }
-        try? storage.delete(itemID: itemID)
+        do {
+            try storage.delete(itemID: itemID)
+        } catch {
+            logger.error("Failed to delete item \(itemID): \(error.localizedDescription)")
+        }
     }
 
     func clear() {
         items.removeAll()
-        try? storage.clearAll()
+        do {
+            try storage.clearAll()
+        } catch {
+            logger.error("Failed to clear storage: \(error.localizedDescription)")
+        }
     }
 
     private func load() {

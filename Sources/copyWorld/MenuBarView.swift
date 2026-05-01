@@ -2,8 +2,8 @@ import AppKit
 import SwiftUI
 
 struct MenuBarView: View {
-    @ObservedObject var historyStore: ClipboardHistoryStore
-    @ObservedObject var launchAtLoginManager: LaunchAtLoginManager
+    let historyStore: ClipboardHistoryStore
+    let launchAtLoginManager: LaunchAtLoginManager
     let monitor: ClipboardMonitor
     let storage: ClipboardStorage
 

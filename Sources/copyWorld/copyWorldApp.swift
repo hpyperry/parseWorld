@@ -26,7 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 private struct SettingsView: View {
-    @ObservedObject var launchAtLoginManager: LaunchAtLoginManager
+    let launchAtLoginManager: LaunchAtLoginManager
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

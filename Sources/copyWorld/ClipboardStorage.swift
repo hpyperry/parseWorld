@@ -36,7 +36,11 @@ final class ClipboardStorage {
     // MARK: - Load
 
     func loadAllMetadata() -> [ClipboardItem] {
-        guard let contents = try? fileManager.contentsOfDirectory(at: itemsDirectory, includingPropertiesForKeys: nil) else {
+        let contents: [URL]
+        do {
+            contents = try fileManager.contentsOfDirectory(at: itemsDirectory, includingPropertiesForKeys: nil)
+        } catch {
+            logger.error("Failed to read items directory: \(error.localizedDescription)")
             return []
         }
 
@@ -47,6 +51,7 @@ final class ClipboardStorage {
             let metadataURL = dir.appendingPathComponent("metadata.json")
             guard let data = try? Data(contentsOf: metadataURL),
                   var item = try? decoder.decode(ClipboardItem.self, from: data) else {
+                logger.error("Failed to load metadata for \(dir.lastPathComponent)")
                 continue
             }
 
@@ -156,7 +161,11 @@ final class ClipboardStorage {
         let toDelete = items.suffix(items.count - maxItems)
 
         for item in toDelete {
-            try? delete(itemID: item.id)
+            do {
+                try delete(itemID: item.id)
+            } catch {
+                logger.error("Failed to prune item \(item.id): \(error.localizedDescription)")
+            }
         }
     }
 
@@ -164,7 +173,11 @@ final class ClipboardStorage {
 
     private func ensureDirectoryExists() {
         guard !fileManager.fileExists(atPath: itemsDirectory.path) else { return }
-        try? fileManager.createDirectory(at: itemsDirectory, withIntermediateDirectories: true)
+        do {
+            try fileManager.createDirectory(at: itemsDirectory, withIntermediateDirectories: true)
+        } catch {
+            logger.error("Failed to create items directory: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - Migration
@@ -174,9 +187,21 @@ final class ClipboardStorage {
 
         guard !defaults.bool(forKey: Self.migrationKey) else { return }
 
-        guard let legacyData = defaults.data(forKey: Self.legacyDataKey),
-              let legacyItems = try? decoder.decode([LegacyClipboardItem].self, from: legacyData),
-              !legacyItems.isEmpty else {
+        guard let legacyData = defaults.data(forKey: Self.legacyDataKey) else {
+            defaults.set(true, forKey: Self.migrationKey)
+            return
+        }
+
+        let legacyItems: [LegacyClipboardItem]
+        do {
+            legacyItems = try decoder.decode([LegacyClipboardItem].self, from: legacyData)
+        } catch {
+            logger.error("Failed to decode legacy clipboard data: \(error.localizedDescription)")
+            defaults.set(true, forKey: Self.migrationKey)
+            return
+        }
+
+        guard !legacyItems.isEmpty else {
             defaults.set(true, forKey: Self.migrationKey)
             return
         }

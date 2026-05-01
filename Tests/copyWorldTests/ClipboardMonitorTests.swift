@@ -5,7 +5,7 @@ import Testing
 
 // MARK: - Fake pasteboard for testing
 
-private final class FakePasteboard: ClipboardPasteboard {
+final class FakePasteboard: ClipboardPasteboard {
     private(set) var changeCount: Int = 0
     private var storedString: String?
     private var storedData: [String: Data] = [:]

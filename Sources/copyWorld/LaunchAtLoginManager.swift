@@ -1,10 +1,12 @@
 import Foundation
+import Observation
 import ServiceManagement
 
 @MainActor
-final class LaunchAtLoginManager: ObservableObject {
-    @Published private(set) var isEnabled = false
-    @Published private(set) var statusMessage: String?
+@Observable
+final class LaunchAtLoginManager {
+    private(set) var isEnabled = false
+    private(set) var statusMessage: String?
 
     init() {
         refresh()

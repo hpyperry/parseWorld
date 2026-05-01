@@ -2,7 +2,7 @@ import AppKit
 import CryptoKit
 import Foundation
 
-struct ClipboardItem: Codable, Identifiable, Equatable {
+struct ClipboardItem: Codable, Identifiable, Equatable, Sendable {
     private static let titleCharacterLimit = 80
 
     // MARK: - Persisted fields

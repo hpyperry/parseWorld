@@ -1,6 +1,10 @@
 import AppKit
 import Foundation
+import OSLog
 
+private let logger = Logger(subsystem: "com.copyworld.clipboard", category: "monitor")
+
+@MainActor
 protocol ClipboardPasteboard: AnyObject {
     var changeCount: Int { get }
     func string(forType dataType: NSPasteboard.PasteboardType) -> String?
@@ -14,7 +18,7 @@ protocol ClipboardPasteboard: AnyObject {
 extension NSPasteboard: ClipboardPasteboard {}
 
 @MainActor
-final class ClipboardMonitor: ObservableObject {
+final class ClipboardMonitor {
     private let pasteboard: ClipboardPasteboard
     private let historyStore: ClipboardHistoryStore
     private let storage: ClipboardStorage
@@ -62,7 +66,18 @@ final class ClipboardMonitor: ObservableObject {
             _ = pasteboard.setString(item.text, forType: .string)
 
         case .rtf:
-            let rtfData = item.rtfData ?? (try? storage.loadRTFData(for: item.id))
+            let loadedData: Data?
+            if item.rtfData != nil {
+                loadedData = item.rtfData
+            } else {
+                do {
+                    loadedData = try storage.loadRTFData(for: item.id)
+                } catch {
+                    logger.error("Failed to load RTF data for item \(item.id): \(error.localizedDescription)")
+                    loadedData = nil
+                }
+            }
+            let rtfData = loadedData
             ignoredContentHash = rtfData.map { ClipboardItem.sha256($0) } ?? item.contentHash
             _ = pasteboard.clearContents()
             let pbItem = NSPasteboardItem()

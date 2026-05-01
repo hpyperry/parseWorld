@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-final class AppState: ObservableObject {
+final class AppState {
     static let shared = AppState()
 
     let storage: ClipboardStorage
