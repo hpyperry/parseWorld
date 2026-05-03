@@ -22,7 +22,7 @@ struct ClipboardHistoryStoreTests {
 
     @Test func save_addsItem() throws {
         try Self.cleanItems()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
         let item = ClipboardItem(text: "first")
 
@@ -34,7 +34,7 @@ struct ClipboardHistoryStoreTests {
 
     @Test func save_newestItemFirst() throws {
         try Self.cleanItems()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
         store.save(item: ClipboardItem(text: "first"))
         store.save(item: ClipboardItem(text: "second"))
@@ -47,7 +47,7 @@ struct ClipboardHistoryStoreTests {
 
     @Test func save_deduplicatesByContentHash() throws {
         try Self.cleanItems()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
         let item1 = ClipboardItem(text: "hello")
         let item2 = ClipboardItem(text: "hello")
@@ -62,7 +62,7 @@ struct ClipboardHistoryStoreTests {
 
     @Test func save_differentTypesDifferentHashes_notDeduped() throws {
         try Self.cleanItems()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
         let textItem = ClipboardItem(text: "hello")
         let rtfData = "{\\rtf1 hello}".data(using: .utf8)!
@@ -79,7 +79,7 @@ struct ClipboardHistoryStoreTests {
 
     @Test func save_respectsMaxItems() throws {
         try Self.cleanItems()
-        let storage = ClipboardStorage(maxItems: 5)
+        let storage = ClipboardStorage(maxItems: 5, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 5)
 
         for i in 0..<10 {
@@ -91,11 +91,43 @@ struct ClipboardHistoryStoreTests {
         try Self.cleanItems()
     }
 
+    @Test func togglePinned_movesItemToTopAndPersists() throws {
+        try Self.cleanItems()
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
+        let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
+        let old = ClipboardItem(text: "old", createdAt: Date(timeIntervalSince1970: 0))
+        let new = ClipboardItem(text: "new", createdAt: Date(timeIntervalSince1970: 1))
+
+        store.save(item: old)
+        store.save(item: new)
+        store.togglePinned(itemID: old.id)
+
+        #expect(store.items[0].id == old.id)
+        #expect(store.items[0].isPinned)
+        #expect(storage.loadAllMetadata()[0].id == old.id)
+        try Self.cleanItems()
+    }
+
+    @Test func save_duplicateKeepsPinnedState() throws {
+        try Self.cleanItems()
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
+        let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
+        let original = ClipboardItem(text: "same")
+
+        store.save(item: original)
+        store.togglePinned(itemID: original.id)
+        store.save(item: ClipboardItem(text: "same"))
+
+        #expect(store.items.count == 1)
+        #expect(store.items[0].isPinned)
+        try Self.cleanItems()
+    }
+
     // MARK: - Remove
 
     @Test func remove_deletesItem() throws {
         try Self.cleanItems()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
         let item = ClipboardItem(text: "test")
         store.save(item: item)
@@ -107,7 +139,7 @@ struct ClipboardHistoryStoreTests {
 
     @Test func remove_nonexistentItem_noCrash() throws {
         try Self.cleanItems()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
         store.save(item: ClipboardItem(text: "test"))
 
@@ -120,7 +152,7 @@ struct ClipboardHistoryStoreTests {
 
     @Test func clear_removesAll() throws {
         try Self.cleanItems()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
         for i in 0..<5 {
             store.save(item: ClipboardItem(text: "item \(i)"))
@@ -135,11 +167,11 @@ struct ClipboardHistoryStoreTests {
 
     @Test func items_persistAcrossInstances() throws {
         try Self.cleanItems()
-        let storage1 = ClipboardStorage(maxItems: 30)
+        let storage1 = ClipboardStorage(maxItems: 30, inMemory: true)
         let store1 = ClipboardHistoryStore(storage: storage1, maximumItems: 30)
         store1.save(item: ClipboardItem(text: "persisted"))
 
-        let storage2 = ClipboardStorage(maxItems: 30)
+        let storage2 = ClipboardStorage(maxItems: 30, modelContainer: storage1.modelContainer)
         let store2 = ClipboardHistoryStore(storage: storage2, maximumItems: 30)
 
         #expect(store2.items.count == 1)

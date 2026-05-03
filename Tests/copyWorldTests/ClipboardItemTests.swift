@@ -125,7 +125,7 @@ struct ClipboardItemTests {
     // MARK: - Codable round-trip
 
     @Test func codable_roundTrip_preservesPersistedFields() throws {
-        let item = ClipboardItem(text: "test")
+        let item = ClipboardItem(text: "test", isPinned: true)
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
         let data = try encoder.encode(item)
@@ -136,6 +136,18 @@ struct ClipboardItemTests {
         #expect(decoded.text == item.text)
         #expect(decoded.contentHash == item.contentHash)
         #expect(decoded.createdAt.timeIntervalSince1970.isEqual(to: item.createdAt.timeIntervalSince1970))
+        #expect(decoded.isPinned)
+    }
+
+    @Test func codable_missingPinnedDefaultsFalse() throws {
+        let item = ClipboardItem(text: "legacy")
+        var object = try JSONSerialization.jsonObject(with: JSONEncoder().encode(item)) as! [String: Any]
+        object.removeValue(forKey: "isPinned")
+        let legacyData = try JSONSerialization.data(withJSONObject: object)
+
+        let decoded = try JSONDecoder().decode(ClipboardItem.self, from: legacyData)
+
+        #expect(!decoded.isPinned)
     }
 
     @Test func codable_excludesTransientFields() throws {

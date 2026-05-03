@@ -43,7 +43,7 @@ app_target.build_configurations.each do |config|
   config.build_settings["INFOPLIST_FILE"] = "copyWorld/Resources/Info.plist"
   config.build_settings["PRODUCT_BUNDLE_IDENTIFIER"] = "com.copyworld.clipboard"
   config.build_settings["CURRENT_PROJECT_VERSION"] = "1"
-  config.build_settings["MARKETING_VERSION"] = "0.0.4"
+  config.build_settings["MARKETING_VERSION"] = "0.0.5"
   config.build_settings["ASSETCATALOG_COMPILER_APPICON_NAME"] = "AppIcon"
   config.build_settings["SWIFT_VERSION"] = "6.0"
   config.build_settings["MACOSX_DEPLOYMENT_TARGET"] = "14.0"

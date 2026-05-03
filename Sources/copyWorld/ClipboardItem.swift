@@ -13,8 +13,9 @@ struct ClipboardItem: Codable, Identifiable, Equatable, Sendable {
     let contentHash: String
     var createdAt: Date
     var imageFormat: String?
+    var isPinned: Bool
 
-    // MARK: - Transient fields (loaded on demand from disk)
+    // MARK: - Transient fields (loaded on demand from storage)
 
     var rtfData: Data?
     var image: NSImage?
@@ -23,45 +24,57 @@ struct ClipboardItem: Codable, Identifiable, Equatable, Sendable {
     // MARK: - Codable
 
     enum CodingKeys: String, CodingKey {
-        case id, type, text, contentHash, createdAt, imageFormat
+        case id, type, text, contentHash, createdAt, imageFormat, isPinned
     }
 
     // MARK: - Initializers
 
-    init(id: UUID = UUID(), type: ClipboardContentType, text: String, contentHash: String, createdAt: Date = .now, imageFormat: String? = nil) {
+    init(
+        id: UUID = UUID(),
+        type: ClipboardContentType,
+        text: String,
+        contentHash: String,
+        createdAt: Date = .now,
+        imageFormat: String? = nil,
+        isPinned: Bool = false
+    ) {
         self.id = id
         self.type = type
         self.text = text
         self.contentHash = contentHash
         self.createdAt = createdAt
         self.imageFormat = imageFormat
+        self.isPinned = isPinned
     }
 
-    init(id: UUID = UUID(), text: String, createdAt: Date = .now) {
+    init(id: UUID = UUID(), text: String, createdAt: Date = .now, isPinned: Bool = false) {
         self.id = id
         self.type = .text
         self.text = text
         self.contentHash = Self.sha256(text)
         self.createdAt = createdAt
         self.imageFormat = nil
+        self.isPinned = isPinned
     }
 
-    init(id: UUID = UUID(), rtfData: Data, plainText: String, createdAt: Date = .now) {
+    init(id: UUID = UUID(), rtfData: Data, plainText: String, createdAt: Date = .now, isPinned: Bool = false) {
         self.id = id
         self.type = .rtf
         self.text = plainText
         self.contentHash = Self.sha256(rtfData)
         self.createdAt = createdAt
         self.imageFormat = nil
+        self.isPinned = isPinned
         self.rtfData = rtfData
     }
 
-    init(id: UUID = UUID(), imageData: Data, format: String, createdAt: Date = .now) {
+    init(id: UUID = UUID(), imageData: Data, format: String, createdAt: Date = .now, isPinned: Bool = false) {
         self.id = id
         self.type = .image
         self.imageFormat = format
         self.contentHash = Self.sha256(imageData)
         self.createdAt = createdAt
+        self.isPinned = isPinned
 
         if let img = NSImage(data: imageData) {
             self.image = img
@@ -70,6 +83,17 @@ struct ClipboardItem: Codable, Identifiable, Equatable, Sendable {
         } else {
             self.text = String(localized: "(Image)")
         }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        type = try container.decode(ClipboardContentType.self, forKey: .type)
+        text = try container.decode(String.self, forKey: .text)
+        contentHash = try container.decode(String.self, forKey: .contentHash)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        imageFormat = try container.decodeIfPresent(String.self, forKey: .imageFormat)
+        isPinned = try container.decodeIfPresent(Bool.self, forKey: .isPinned) ?? false
     }
 
     // MARK: - Computed properties

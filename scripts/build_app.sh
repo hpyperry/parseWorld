@@ -15,6 +15,7 @@ xcodebuild \
   -project "$ROOT_DIR/copyWorld.xcodeproj" \
   -scheme "$APP_NAME" \
   -configuration Release \
+  -destination "platform=macOS,arch=arm64" \
   -derivedDataPath "$DERIVED_DATA_DIR" \
   CONFIGURATION_BUILD_DIR="$BUILD_DIR" \
   build > /dev/null

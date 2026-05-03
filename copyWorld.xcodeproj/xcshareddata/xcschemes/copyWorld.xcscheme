@@ -15,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A18E11D0E703B061AB254AE3"
+               BlueprintIdentifier = "7F8F44DCDE53525B684F4531"
                BuildableName = "copyWorld.app"
                BlueprintName = "copyWorld"
                ReferencedContainer = "container:copyWorld.xcodeproj">
@@ -29,7 +29,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "607BA619684A667267899BA4"
+               BlueprintIdentifier = "3C9BAB4A6E310A17A79FBB2E"
                BuildableName = "copyWorldTests.xctest"
                BlueprintName = "copyWorldTests"
                ReferencedContainer = "container:copyWorld.xcodeproj">
@@ -49,7 +49,7 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "607BA619684A667267899BA4"
+               BlueprintIdentifier = "3C9BAB4A6E310A17A79FBB2E"
                BuildableName = "copyWorldTests.xctest"
                BlueprintName = "copyWorldTests"
                ReferencedContainer = "container:copyWorld.xcodeproj">
@@ -71,7 +71,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A18E11D0E703B061AB254AE3"
+            BlueprintIdentifier = "7F8F44DCDE53525B684F4531"
             BuildableName = "copyWorld.app"
             BlueprintName = "copyWorld"
             ReferencedContainer = "container:copyWorld.xcodeproj">
@@ -88,7 +88,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A18E11D0E703B061AB254AE3"
+            BlueprintIdentifier = "7F8F44DCDE53525B684F4531"
             BuildableName = "copyWorld.app"
             BlueprintName = "copyWorld"
             ReferencedContainer = "container:copyWorld.xcodeproj">

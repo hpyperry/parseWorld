@@ -5,7 +5,7 @@ A menu-bar-only macOS clipboard history app supporting plain text, rich text (RT
 ## Features
 
 - Monitors clipboard for text, formatted text (RTF), and images (PNG/TIFF)
-- Saves up to 30 items locally with file-system persistence
+- Saves up to 100 recent items locally with SwiftData persistence, plus pinned items
 - Search clipboard history (text/RTF only; images excluded from search)
 - Copy any entry back to the system clipboard with original formatting
 - Type-aware previews: monospaced text, rich text rendering, image with checkerboard background
@@ -17,7 +17,7 @@ A menu-bar-only macOS clipboard history app supporting plain text, rich text (RT
 
 - Swift 6 + SwiftUI + AppKit
 - `@Observable` (macOS 14+) data flow
-- File-system persistence (`~/Library/Application Support/copyWorld/`)
+- SwiftData persistence (`~/Library/Application Support/copyWorld/Clipboard.sqlite`)
 - Privacy manifest (`PrivacyInfo.xcprivacy`)
 - Xcode macOS app target (macOS 14.0+)
 
@@ -28,10 +28,10 @@ A menu-bar-only macOS clipboard history app supporting plain text, rich text (RT
 open copyWorld.xcodeproj
 
 # CLI build (Debug)
-xcodebuild -project copyWorld.xcodeproj -scheme copyWorld -configuration Debug build
+xcodebuild -project copyWorld.xcodeproj -scheme copyWorld -configuration Debug -destination "platform=macOS,arch=arm64" build
 
-# Run tests (65 test cases including 18 stress tests)
-xcodebuild -project copyWorld.xcodeproj -scheme copyWorld -configuration Debug test
+# Run tests (70 test cases including 18 stress tests)
+xcodebuild -project copyWorld.xcodeproj -scheme copyWorld -configuration Debug -destination "platform=macOS,arch=arm64" test
 
 # Build Release .app → dist/
 ./scripts/build_app.sh

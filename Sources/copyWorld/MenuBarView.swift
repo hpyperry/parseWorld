@@ -103,6 +103,10 @@ struct MenuBarView: View {
                                     }
                                 }
                             },
+                            onTogglePin: {
+                                NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
+                                historyStore.togglePinned(itemID: item.id)
+                            },
                             onDelete: {
                                 NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
 
@@ -231,6 +235,7 @@ private struct ClipboardRow: View {
     let isCopied: Bool
     let onSelect: () -> Void
     let onCopy: () -> Void
+    let onTogglePin: () -> Void
     let onDelete: () -> Void
 
     private var copyLabel: String {
@@ -274,6 +279,12 @@ private struct ClipboardRow: View {
                 .tint(isCopied ? .green : .accentColor)
                 .disabled(isCopied)
 
+                Button(action: onTogglePin) {
+                    Label(item.isPinned ? "Unpin" : "Pin", systemImage: item.isPinned ? "pin.slash" : "pin")
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(item.isPinned ? .orange : .secondary)
+
                 Button("Delete", role: .destructive, action: onDelete)
                     .buttonStyle(.borderedProminent)
                     .tint(.red)
@@ -287,21 +298,36 @@ private struct ClipboardRow: View {
     private var typeIcon: some View {
         switch item.type {
         case .text:
-            EmptyView()
+            if item.isPinned {
+                Image(systemName: "pin.fill")
+                    .foregroundStyle(.orange)
+                    .font(.title3)
+            } else {
+                EmptyView()
+            }
         case .rtf:
-            Image(systemName: "doc.richtext")
-                .foregroundStyle(.secondary)
+            Image(systemName: item.isPinned ? "pin.fill" : "doc.richtext")
+                .foregroundStyle(item.isPinned ? .orange : .secondary)
                 .font(.title3)
         case .image:
             if let thumbnail = item.thumbnail {
-                Image(nsImage: thumbnail)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 36, height: 36)
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                ZStack(alignment: .topTrailing) {
+                    Image(nsImage: thumbnail)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 36, height: 36)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                    if item.isPinned {
+                        Image(systemName: "pin.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                            .padding(2)
+                            .background(.background.opacity(0.8), in: Circle())
+                    }
+                }
             } else {
-                Image(systemName: "photo")
-                    .foregroundStyle(.secondary)
+                Image(systemName: item.isPinned ? "pin.fill" : "photo")
+                    .foregroundStyle(item.isPinned ? .orange : .secondary)
                     .font(.title3)
             }
         }

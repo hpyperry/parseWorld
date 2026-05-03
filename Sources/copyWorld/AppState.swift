@@ -10,10 +10,10 @@ final class AppState {
     let launchAtLoginManager: LaunchAtLoginManager
 
     private init() {
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 100)
         self.storage = storage
 
-        let historyStore = ClipboardHistoryStore(storage: storage, maximumItems: 30)
+        let historyStore = ClipboardHistoryStore(storage: storage, maximumItems: 100)
         self.historyStore = historyStore
 
         self.monitor = ClipboardMonitor(historyStore: historyStore, storage: storage)

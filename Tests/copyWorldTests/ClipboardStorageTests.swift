@@ -24,7 +24,7 @@ struct ClipboardStorageTests {
 
     @Test func saveAndLoad_textItem() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 5)
+        let storage = ClipboardStorage(maxItems: 5, inMemory: true)
         let item = ClipboardItem(text: "hello world")
 
         try storage.save(item: item, rtfData: nil, imageData: nil)
@@ -38,7 +38,7 @@ struct ClipboardStorageTests {
 
     @Test func loadAllMetadata_emptyInitially() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 5)
+        let storage = ClipboardStorage(maxItems: 5, inMemory: true)
         #expect(storage.loadAllMetadata().isEmpty)
     }
 
@@ -46,7 +46,7 @@ struct ClipboardStorageTests {
 
     @Test func saveAndLoad_RTFItem() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 5)
+        let storage = ClipboardStorage(maxItems: 5, inMemory: true)
         let rtfData = "{\\rtf1\\ansi Bold \\b test \\b0}".data(using: .utf8)!
         let item = ClipboardItem(rtfData: rtfData, plainText: "Bold test")
 
@@ -65,7 +65,7 @@ struct ClipboardStorageTests {
 
     @Test func saveAndLoad_imageItem() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 5)
+        let storage = ClipboardStorage(maxItems: 5, inMemory: true)
         let image = NSImage(size: NSSize(width: 50, height: 50), flipped: false) { $0.fill(); return true }
         let tiffData = image.tiffRepresentation!
         let item = ClipboardItem(imageData: tiffData, format: "tiff")
@@ -83,7 +83,7 @@ struct ClipboardStorageTests {
 
     @Test func saveImage_thumbnailPersisted() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 5)
+        let storage = ClipboardStorage(maxItems: 5, inMemory: true)
         let image = NSImage(size: NSSize(width: 100, height: 100), flipped: false) { $0.fill(); return true }
         let tiffData = image.tiffRepresentation!
         let item = ClipboardItem(imageData: tiffData, format: "tiff")
@@ -99,7 +99,7 @@ struct ClipboardStorageTests {
 
     @Test func delete_removesItem() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 5)
+        let storage = ClipboardStorage(maxItems: 5, inMemory: true)
         let item = ClipboardItem(text: "test")
         try storage.save(item: item, rtfData: nil, imageData: nil)
         #expect(storage.loadAllMetadata().count == 1)
@@ -113,7 +113,7 @@ struct ClipboardStorageTests {
 
     @Test func clear_removesAllItems() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 10)
+        let storage = ClipboardStorage(maxItems: 10, inMemory: true)
         for i in 0..<5 {
             let item = ClipboardItem(text: "item \(i)")
             try storage.save(item: item, rtfData: nil, imageData: nil)
@@ -129,7 +129,7 @@ struct ClipboardStorageTests {
 
     @Test func save_prunesOldItems() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 3)
+        let storage = ClipboardStorage(maxItems: 3, inMemory: true)
         for i in 0..<10 {
             let item = ClipboardItem(text: "item \(i)")
             try storage.save(item: item, rtfData: nil, imageData: nil)
@@ -140,11 +140,47 @@ struct ClipboardStorageTests {
         try Self.cleanItemsDirectory()
     }
 
+    @Test func save_prunePreservesPinnedItems() throws {
+        try Self.cleanItemsDirectory()
+        let storage = ClipboardStorage(maxItems: 2, inMemory: true)
+
+        let pinned = ClipboardItem(text: "pinned", createdAt: Date(timeIntervalSince1970: 0), isPinned: true)
+        try storage.save(item: pinned, rtfData: nil, imageData: nil)
+        for i in 0..<5 {
+            let item = ClipboardItem(text: "item \(i)", createdAt: Date(timeIntervalSince1970: Double(i + 1)))
+            try storage.save(item: item, rtfData: nil, imageData: nil)
+        }
+
+        let loaded = storage.loadAllMetadata()
+        #expect(loaded.count == 3)
+        #expect(loaded[0].text == "pinned")
+        #expect(loaded[0].isPinned)
+        #expect(loaded[1].text == "item 4")
+        #expect(loaded[2].text == "item 3")
+        try Self.cleanItemsDirectory()
+    }
+
+    @Test func setPinned_persistsAndSortsFirst() throws {
+        try Self.cleanItemsDirectory()
+        let storage = ClipboardStorage(maxItems: 5, inMemory: true)
+        let old = ClipboardItem(text: "old", createdAt: Date(timeIntervalSince1970: 0))
+        let new = ClipboardItem(text: "new", createdAt: Date(timeIntervalSince1970: 1))
+
+        try storage.save(item: old, rtfData: nil, imageData: nil)
+        try storage.save(item: new, rtfData: nil, imageData: nil)
+        try storage.setPinned(itemID: old.id, isPinned: true)
+
+        let loaded = storage.loadAllMetadata()
+        #expect(loaded[0].id == old.id)
+        #expect(loaded[0].isPinned)
+        try Self.cleanItemsDirectory()
+    }
+
     // MARK: - Load image
 
     @Test func loadImage_returnsNSImage() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 5)
+        let storage = ClipboardStorage(maxItems: 5, inMemory: true)
         let image = NSImage(size: NSSize(width: 30, height: 30), flipped: false) { $0.fill(); return true }
         let tiffData = image.tiffRepresentation!
         let item = ClipboardItem(imageData: tiffData, format: "tiff")

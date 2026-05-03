@@ -23,7 +23,7 @@ struct StressTests {
 
     @Test func saveMaxItems_rapidFire() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
 
         for i in 0..<30 {
             let item = ClipboardItem(text: "stress item \(i)")
@@ -36,7 +36,7 @@ struct StressTests {
 
     @Test func prune_exceedMaxByLargeMargin() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 10)
+        let storage = ClipboardStorage(maxItems: 10, inMemory: true)
 
         for i in 0..<100 {
             let item = ClipboardItem(text: "prune item \(i)")
@@ -51,7 +51,7 @@ struct StressTests {
 
     @Test func extremePrune_1000items() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 5)
+        let storage = ClipboardStorage(maxItems: 5, inMemory: true)
 
         for i in 0..<1000 {
             let item = ClipboardItem(text: "bulk \(i)")
@@ -67,7 +67,7 @@ struct StressTests {
 
     @Test func largeText_100KB() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 10)
+        let storage = ClipboardStorage(maxItems: 10, inMemory: true)
 
         let chunk = String(repeating: "The quick brown fox jumps over the lazy dog. ", count: 2000) // ~88KB
         let item = ClipboardItem(text: chunk)
@@ -81,7 +81,7 @@ struct StressTests {
 
     @Test func largeText_1MB() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 10)
+        let storage = ClipboardStorage(maxItems: 10, inMemory: true)
 
         let chunk = String(repeating: "A", count: 1_000_000)
         let item = ClipboardItem(text: chunk)
@@ -94,7 +94,7 @@ struct StressTests {
 
     @Test func largeImage_4K() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 10)
+        let storage = ClipboardStorage(maxItems: 10, inMemory: true)
 
         let image = NSImage(size: NSSize(width: 3840, height: 2160), flipped: false) { rect in
             NSColor.red.setFill()
@@ -137,7 +137,7 @@ struct StressTests {
 
     @Test func rapidDedup_sameContentRepeatedly() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
 
         for _ in 0..<50 {
@@ -149,7 +149,7 @@ struct StressTests {
 
     @Test func dedup_mixedUniqueAndDuplicate() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
 
         for i in 0..<20 {
@@ -167,7 +167,7 @@ struct StressTests {
 
     @Test func rapidAddRemove_interleaved() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
 
         var ids: [UUID] = []
         for i in 0..<30 {
@@ -187,7 +187,7 @@ struct StressTests {
 
     @Test func clearAndRepopulate_repeatedly() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
 
         for cycle in 0..<5 {
             for i in 0..<10 {
@@ -205,7 +205,7 @@ struct StressTests {
 
     @Test func historyStore_maxItemsEnforced() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 20)
+        let storage = ClipboardStorage(maxItems: 20, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 20)
 
         for i in 0..<50 {
@@ -217,7 +217,7 @@ struct StressTests {
 
     @Test func historyStore_rapidDedupAndReorder() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
 
         store.save(item: ClipboardItem(text: "A"))
@@ -236,7 +236,7 @@ struct StressTests {
 
     @Test func monitor_rapidPollingSimulation() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
         let fakePasteboard = FakePasteboard()
         let monitor = ClipboardMonitor(pasteboard: fakePasteboard, historyStore: store, storage: storage)
@@ -253,7 +253,7 @@ struct StressTests {
 
     @Test func monitor_rapidSameContentIgnored() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
         let fakePasteboard = FakePasteboard()
         let monitor = ClipboardMonitor(pasteboard: fakePasteboard, historyStore: store, storage: storage)
@@ -268,7 +268,7 @@ struct StressTests {
 
     @Test func monitor_emptyTextRepeatedlyIgnored() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
         let store = ClipboardHistoryStore(storage: storage, maximumItems: 30)
         let fakePasteboard = FakePasteboard()
         let monitor = ClipboardMonitor(pasteboard: fakePasteboard, historyStore: store, storage: storage)
@@ -285,7 +285,7 @@ struct StressTests {
 
     @Test func thumbnail_manyImages() throws {
         try Self.cleanItemsDirectory()
-        let storage = ClipboardStorage(maxItems: 30)
+        let storage = ClipboardStorage(maxItems: 30, inMemory: true)
 
         for size in [100, 200, 400, 800, 1600] {
             let image = NSImage(size: NSSize(width: size, height: size), flipped: false) { rect in

@@ -75,9 +75,7 @@ final class FakePasteboard: ClipboardPasteboard {
 
 @MainActor
 private func makeTestStore() -> ClipboardHistoryStore {
-    let tempDir = FileManager.default.temporaryDirectory
-        .appendingPathComponent("copyWorldMonitorTest-\(UUID().uuidString)")
-    let storage = ClipboardStorage(maxItems: 30, fileManager: .default)
+    let storage = ClipboardStorage(maxItems: 30, fileManager: .default, inMemory: true)
     return ClipboardHistoryStore(storage: storage, maximumItems: 30)
 }
 
@@ -216,7 +214,7 @@ struct ClipboardMonitorTests {
         let monitor = ClipboardMonitor(pasteboard: pasteboard, historyStore: store, storage: storeTestStorage())
 
         // Simulate pasteboard having both image and string data
-        var item = NSPasteboardItem()
+        let item = NSPasteboardItem()
         let image = NSImage(size: NSSize(width: 10, height: 10), flipped: false) { $0.fill(); return true }
         item.setData(image.tiffRepresentation!, forType: .tiff)
         item.setString("also present", forType: .string)
@@ -250,5 +248,5 @@ struct ClipboardMonitorTests {
 // Helper to create a test Storage
 @MainActor
 private func storeTestStorage() -> ClipboardStorage {
-    ClipboardStorage(maxItems: 30, fileManager: .default)
+    ClipboardStorage(maxItems: 30, fileManager: .default, inMemory: true)
 }
