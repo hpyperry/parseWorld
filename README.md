@@ -1,5 +1,7 @@
 # copyWorld
 
+[中文](README_zh.md)
+
 A menu-bar-only macOS clipboard history app supporting plain text, rich text (RTF), and images, with English and Simplified Chinese localization.
 
 ## Features
@@ -51,3 +53,21 @@ ruby scripts/generate_xcodeproj.rb
 - The app is unsigned — right-click → Open on first launch (or `xattr -cr copyWorld.app`)
 - No sandbox, no notarization, no Sparkle update framework
 - Requires accessibility permissions for clipboard access
+
+## Roadmap
+
+### TODO
+
+- [ ] **Global hotkey** — Add a shortcut (recommended ⌃⌥V) to toggle the clipboard history popover, similar to Windows Win+V. Requires global hotkey monitoring and a settings UI for customization.
+- [ ] **Pin button optimization** — Move the pin/unpin action from the current UI button to a right-click context menu, reducing UI clutter.
+- [ ] **Accessibility** — Add VoiceOver labels to ClipboardRow, accessibilityLabel for search field, VoiceOver notification on copy success, improve status bar icon accessibilityDescription.
+- [ ] **Code signing & notarization** — Requires Apple Developer account. Enable Hardened Runtime + Developer ID signing + Notarization.
+- [ ] **Clipboard content encryption** — Currently stored in plaintext. Needs an encryption scheme and key management.
+
+### Done
+
+- Swift 6 modernization with strict concurrency checking
+- SwiftData persistence replacing file-system storage
+- Privacy manifest (PrivacyInfo.xcprivacy)
+- Auto-migration from UserDefaults / file-system storage
+- Stress tests (large content, high-frequency operations, Codable performance)

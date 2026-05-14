@@ -63,6 +63,16 @@ A **menu-bar-only** macOS clipboard history app (no Dock icon, `LSUIElement = tr
 - **Error handling with OSLog**: Storage and monitor errors are logged via `Logger` (subsystem: `com.copyworld.clipboard`, categories: `storage`, `history-store`, `monitor`) for debugging in Console.app. Programming errors use `assertionFailure` for Debug-time crash. User-visible behavior degrades silently (e.g., failed metadata load skips item, failed thumbnail returns nil).
 - **Haptic + visual feedback on actions**: Copy and delete both trigger `NSHapticFeedbackManager.defaultPerformer.perform(.alignment)`. Copy additionally shows a brief button state change (`doc.on.doc` + "Copy" → `checkmark` + "Copied", green tint, disabled for 1.5s) tracked via a `@State copiedItemID` in `MenuBarView` with a `Task.sleep` reset. Follow this pattern when adding new destructive or clipboard-mutating actions.
 
+## Roadmap
+
+See [README.md](README.md#roadmap) for the full roadmap. Key upcoming items:
+
+- **全局快捷键**: 添加 ⌃⌥V 等全局热键呼出剪贴板历史面板（需全局热键监听 + Settings 配置）
+- **Pin 按钮位置优化**: 将 pin 从 UI 按钮移到右键上下文菜单（`contextMenu` modifier）
+- **无障碍支持**: VoiceOver 标签、accessibilityLabel、通知等
+- **代码签名 & 公证**: Developer ID 签名 + Notarization + Hardened Runtime
+- **剪贴板内容加密**: 昘文存储需改为加密方案
+
 ## Versioning & Release
 
 Version is defined in two places (source of truth: `scripts/generate_xcodeproj.rb`):
