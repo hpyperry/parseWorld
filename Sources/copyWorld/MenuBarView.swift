@@ -283,7 +283,7 @@ private struct ClipboardRow: View {
                     Label(item.isPinned ? "Unpin" : "Pin", systemImage: item.isPinned ? "pin.slash" : "pin")
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(item.isPinned ? .orange : .secondary)
+                .tint(item.isPinned ? .orange : .gray)
 
                 Button("Delete", role: .destructive, action: onDelete)
                     .buttonStyle(.borderedProminent)
